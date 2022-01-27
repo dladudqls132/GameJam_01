@@ -1,21 +1,105 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+public enum DIFFICULTY
+{
+    EASY,
+    NORMAL,
+    HARD
+}
 
 
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] public DIFFICULTY difficulty;
     [SerializeField] protected float hp;
     [SerializeField] protected float speed;
-    [SerializeField] protected bool isDead;
+    [SerializeField] protected int damage;
+    [SerializeField] public bool isDead;
     [SerializeField] protected Bone weaknessBone;
+    [SerializeField] protected int score;
+    [SerializeField] protected float attackRange;
+    [SerializeField] protected float attackDelay;
+    
+    [SerializeField] protected MeshRenderer[] meshes_head;
+    [SerializeField] protected MeshRenderer[] meshes_body;
+    [SerializeField] protected MeshRenderer[] meshes_lowerBody;
+
+    protected GameObject target;
+    protected Rigidbody rigid;
 
     protected float currentHp;
     protected float currentSpeed;
 
+    [SerializeField] protected Transform test;
+    [SerializeField] protected List<GameObject> enemyBones = new List<GameObject>();
+
+    virtual protected void Start()
+    {
+        target = GameManager.Instance.playerController.gameObject;
+        rigid = this.GetComponent<Rigidbody>();
+
+        if (weaknessBone == Bone.NONE)
+        {
+            weaknessBone = (Bone)Random.Range((int)Bone.NONE + 1, (int)Bone.LOWERBODY + 1);
+            SetPartColor();
+        }
+    }
+
+    void SetPartColor()
+    {
+        switch(weaknessBone)
+        {
+            case Bone.HEAD:
+              foreach(MeshRenderer m in meshes_head)
+                {
+                    m.material.color = Color.red;
+                }
+                foreach (MeshRenderer m in meshes_body)
+                {
+                    m.material.color = Color.white;
+                }
+                foreach (MeshRenderer m in meshes_lowerBody)
+                {
+                    m.material.color = Color.white;
+                }
+                break;
+            case Bone.BODY:
+                foreach (MeshRenderer m in meshes_head)
+                {
+                    m.material.color = Color.white;
+                }
+                foreach (MeshRenderer m in meshes_body)
+                {
+                    m.material.color = Color.red;
+                }
+                foreach (MeshRenderer m in meshes_lowerBody)
+                {
+                    m.material.color = Color.white;
+                }
+                break;
+            case Bone.LOWERBODY:
+                foreach (MeshRenderer m in meshes_head)
+                {
+                    m.material.color = Color.white;
+                }
+                foreach (MeshRenderer m in meshes_body)
+                {
+                    m.material.color = Color.white;
+                }
+                foreach (MeshRenderer m in meshes_lowerBody)
+                {
+                    m.material.color = Color.red;
+                }
+
+                break;
+        }
+    }
+  
+
     public void DecreaseHP(float damage, Transform part, Vector3 velocity)
     {
-        if (isDead || velocity.magnitude < 5f) return;
+        if (isDead || velocity.magnitude < 6f) return;
 
         currentHp -= damage;
 
@@ -23,42 +107,50 @@ public class Enemy : MonoBehaviour
 
         if(part.GetComponent<EnemyBone>().bone == weaknessBone)
         {
-            Debug.Log("Critical!!");
+            GameManager.Instance.scoreManager.IncreaseScore(score * 2);
         }
         else
         {
-            Debug.Log("Damaged");
+            GameManager.Instance.scoreManager.IncreaseScore(score);
         }
 
         if(currentHp <= 0)
         {
             isDead = true;
 
-            //part.gameObject.SetActive(false);
-            
-
-            for (int i = 0; i < this.transform.childCount; i++)
+            foreach(EnemyBone e in this.transform.GetComponentsInChildren<EnemyBone>())
             {
-                Transform childTrs = transform.GetChild(i);
-
-                if (childTrs.gameObject.activeSelf)
-                {
-                    CharacterJoint cj = transform.GetChild(i).GetComponent<CharacterJoint>();
-                    if (cj != null)
-                    {
-                        if (!cj.connectedBody.gameObject.activeSelf)
-                           cj.connectedBody = null;
-                    }
-
-                    childTrs.GetComponent<Rigidbody>().useGravity = true;
-                    childTrs.GetComponent<Rigidbody>().isKinematic = false;
-                    childTrs.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                    childTrs.GetComponent<Rigidbody>().angularVelocity =Vector3.zero;
-                }
+                //enemyBones.Add(e);
+                e.GetComponent<Rigidbody>().useGravity = true;
+                e.GetComponent<Rigidbody>().isKinematic = false;
+                e.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                e.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                e.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
+                //e.transform.parent = null;
             }
 
-            part.GetComponent<Rigidbody>().AddForce(velocity * 4, ForceMode.VelocityChange);
-            transform.DetachChildren();
+            test.parent = null;
+    
+            part.GetComponent<Rigidbody>().AddForce(Vector3.ClampMagnitude(velocity * 2, 30), ForceMode.VelocityChange);
+
+            StartCoroutine(ResetDelay());
         }
+    }
+
+    virtual protected IEnumerator ResetDelay(float time = 2.0f)
+    {
+        yield return new WaitForSeconds(time);
+
+        //isDead = false;
+        currentHp = hp;
+        
+        weaknessBone = (Bone)Random.Range(0, (int)Bone.LOWERBODY + 1);
+        SetPartColor();
+        //foreach (GameObject e in enemyBones)
+        //{
+        //    //e.gameObject.SetActive(false);
+        //}
+        test.gameObject.SetActive(false);
+        this.gameObject.SetActive(false);
     }
 }

@@ -54,7 +54,7 @@ public class ObiCollisionTest : MonoBehaviour
         {
             ObiColliderBase col = world.colliderHandles[contact.bodyB].owner;
 
-            if (contact.distance < 0.01f)
+            if (contact.distance < 0.05f)
             {
                 if (col != null)
                 {
@@ -65,7 +65,7 @@ public class ObiCollisionTest : MonoBehaviour
                         if (col.transform.parent != null)
                         {
                             Vector3 velocity = solver.velocities[FindClosestRopeParticle(col.transform.position)];
-                            col.transform.parent.GetComponent<Enemy>().DecreaseHP(100, col.transform, velocity);
+                            col.GetComponent<EnemyBone>().parent.GetComponent<Enemy>().DecreaseHP(100, col.transform, velocity);
                         }
                     }
                 }
@@ -80,7 +80,7 @@ public class ObiCollisionTest : MonoBehaviour
                         if (col.transform.parent != null)
                         {
                             Vector3 velocity = solver.velocities[FindClosestRopeParticle(col.transform.position)];
-                            col.transform.parent.GetComponent<Enemy>().DecreaseHP(100, col.transform, velocity);
+                            col.GetComponent<EnemyBone>().parent.GetComponent<Enemy>().DecreaseHP(100, col.transform, velocity);
                         }
                     }
 

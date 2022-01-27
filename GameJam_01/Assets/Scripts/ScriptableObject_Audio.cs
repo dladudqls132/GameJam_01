@@ -28,7 +28,7 @@ public class ScriptableObject_Audio : ScriptableObject
         if (audioInfos_BGM.Exists(n => n.name.Equals(name)))
             return audioInfos_BGM.Find(a => a.name.Equals(name));
         else if (audioInfos_SFX.Exists(n => n.name.Equals(name)))
-            return audioInfos_BGM.Find(a => a.name.Equals(name));
+            return audioInfos_SFX.Find(a => a.name.Equals(name));
         else
             return null;
     }

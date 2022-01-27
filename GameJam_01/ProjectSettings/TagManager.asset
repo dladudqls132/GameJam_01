@@ -22,9 +22,9 @@ TagManager:
   - Selectable
   - Enemy
   - Bone
-  - 
-  - 
-  - 
+  - Bone_Ragdoll
+  - Ragdoll
+  - Weapon
   - 
   - 
   - 

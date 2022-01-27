@@ -43,7 +43,9 @@ public class NewGrabInteractable : XRGrabInteractable
     {
         if (args.interactor is XRDirectInteractor)
         {
-            this.transform.SetParent(tempParent);
+            if(tempParent != null)
+                this.transform.SetParent(tempParent);
+
             tempParent = null;
             rigid.constraints = RigidbodyConstraints.None;
 
