@@ -33,6 +33,7 @@ public class Enemy : MonoBehaviour
 
     [SerializeField] protected Transform test;
     [SerializeField] protected List<GameObject> enemyBones = new List<GameObject>();
+    protected Rigidbody[] bones;
 
     virtual protected void Start()
     {
@@ -44,6 +45,18 @@ public class Enemy : MonoBehaviour
             weaknessBone = (Bone)Random.Range((int)Bone.NONE + 1, (int)Bone.LOWERBODY + 1);
             SetPartColor();
         }
+
+        bones = this.transform.GetComponentsInChildren<Rigidbody>();
+        foreach (Rigidbody r in bones)
+        {
+            r.gameObject.AddComponent<Obi.ObiCollider>();
+            EnemyBone temp = r.gameObject.AddComponent<EnemyBone>();
+            temp.parent = this.transform;
+
+            r.isKinematic = true;
+        }
+
+        this.GetComponent<Rigidbody>().isKinematic = false;
     }
 
     void SetPartColor()
@@ -116,33 +129,50 @@ public class Enemy : MonoBehaviour
 
         if(currentHp <= 0)
         {
+            for(int i = 0; i < FindObjectsOfType<Controller>().Length; i++)
+            FindObjectsOfType<Controller>()[i].Vibration(0.7f, 0.1f);
+            
             isDead = true;
 
-            foreach(EnemyBone e in this.transform.GetComponentsInChildren<EnemyBone>())
+            //foreach(EnemyBone e in this.transform.GetComponentsInChildren<EnemyBone>())
+            //{
+            //    //enemyBones.Add(e);
+            //    e.GetComponent<Rigidbody>().useGravity = true;
+            //    e.GetComponent<Rigidbody>().isKinematic = false;
+            //    e.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            //    e.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+            //    e.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
+            //    //e.transform.parent = null;
+            //}
+
+            //test.parent = null;
+
+            if(this.GetComponent<Animation>())
+                this.GetComponent<Animation>().enabled = false;
+            if(this.GetComponent<Animator>())
+                this.GetComponent<Animator>().enabled = false;
+
+            foreach (Rigidbody r in bones)
             {
-                //enemyBones.Add(e);
-                e.GetComponent<Rigidbody>().useGravity = true;
-                e.GetComponent<Rigidbody>().isKinematic = false;
-                e.GetComponent<Rigidbody>().velocity = Vector3.zero;
-                e.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-                e.gameObject.layer = LayerMask.NameToLayer("Ragdoll");
-                //e.transform.parent = null;
+                r.velocity = velocity = Vector3.zero;
+                r.angularVelocity = Vector3.zero;
+                r.isKinematic = false;
             }
 
-            test.parent = null;
-    
-            part.GetComponent<Rigidbody>().AddForce(Vector3.ClampMagnitude(velocity * 2, 30), ForceMode.VelocityChange);
+            //part.GetComponent<Rigidbody>().AddForce(Vector3.ClampMagnitude(velocity * 8, 30), ForceMode.VelocityChange);
+            part.GetComponent<Rigidbody>().AddForce(velocity * 1200, ForceMode.VelocityChange);
 
             StartCoroutine(ResetDelay());
         }
     }
 
-    virtual protected IEnumerator ResetDelay(float time = 2.0f)
+    virtual protected IEnumerator ResetDelay(float time = 3.0f)
     {
         yield return new WaitForSeconds(time);
 
         //isDead = false;
         currentHp = hp;
+
         
         weaknessBone = (Bone)Random.Range(0, (int)Bone.LOWERBODY + 1);
         SetPartColor();
@@ -150,7 +180,8 @@ public class Enemy : MonoBehaviour
         //{
         //    //e.gameObject.SetActive(false);
         //}
-        test.gameObject.SetActive(false);
+        //test.gameObject.SetActive(false);
+
         this.gameObject.SetActive(false);
     }
 }

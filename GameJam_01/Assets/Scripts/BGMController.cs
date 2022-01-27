@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class BGMController : MonoBehaviour
 {
+    [SerializeField] private string bgm;
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(GameManager.Instance.soundManager.AudioPlayBGM("part1_bgm", true));
+        StartCoroutine(GameManager.Instance.soundManager.AudioPlayBGM(bgm, true));
     }
 }

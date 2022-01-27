@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Enemy_Dummy : Enemy
 {
+
     protected override void Start()
     {
         base.Start();
@@ -13,6 +14,8 @@ public class Enemy_Dummy : Enemy
 
     private void Update()
     {
+        if (isDead) return;
+
         Vector3 dir = (target.GetComponent<Collider>().bounds.center - this.transform.position).normalized;
         dir.y = 0;
 

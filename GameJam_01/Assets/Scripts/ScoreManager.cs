@@ -17,6 +17,6 @@ public class ScoreManager : MonoBehaviour
     {
         this.score += value;
 
-        tmp_score.text = "Score: " + this.score.ToString();
+       // tmp_score.text = "Score: " + this.score.ToString();
     }
 }

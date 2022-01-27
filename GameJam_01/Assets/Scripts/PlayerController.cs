@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
             isDead = true;
             deadCanvas.enabled = true;
 
-            GameManager.Instance.loadingSceneController.LoadScene("MainMenu", 2.0f);
+            StartCoroutine(GameManager.Instance.loadingSceneController.LoadScene("MainMenu", 2.0f));
         }
     }
 }
