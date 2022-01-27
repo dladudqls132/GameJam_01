@@ -13,9 +13,9 @@ public class Enemy : MonoBehaviour
     protected float currentHp;
     protected float currentSpeed;
 
-    public void DecreaseHP(float damage, Transform part)
+    public void DecreaseHP(float damage, Transform part, Vector3 velocity)
     {
-        if (isDead) return;
+        if (isDead || velocity.magnitude < 5f) return;
 
         currentHp -= damage;
 
@@ -34,23 +34,30 @@ public class Enemy : MonoBehaviour
         {
             isDead = true;
 
-            part.gameObject.SetActive(false);
+            //part.gameObject.SetActive(false);
+            
 
             for (int i = 0; i < this.transform.childCount; i++)
             {
-                if (transform.GetChild(i).gameObject.activeSelf)
+                Transform childTrs = transform.GetChild(i);
+
+                if (childTrs.gameObject.activeSelf)
                 {
-                    if (transform.GetChild(i).GetComponent<CharacterJoint>() != null)
+                    CharacterJoint cj = transform.GetChild(i).GetComponent<CharacterJoint>();
+                    if (cj != null)
                     {
-                        if (!transform.GetChild(i).GetComponent<CharacterJoint>().connectedBody.gameObject.activeSelf)
-                            transform.GetChild(i).GetComponent<CharacterJoint>().connectedBody = null;
+                        if (!cj.connectedBody.gameObject.activeSelf)
+                           cj.connectedBody = null;
                     }
 
-                    transform.GetChild(i).GetComponent<Rigidbody>().useGravity = true;
-                    transform.GetChild(i).GetComponent<Rigidbody>().isKinematic = false;
+                    childTrs.GetComponent<Rigidbody>().useGravity = true;
+                    childTrs.GetComponent<Rigidbody>().isKinematic = false;
+                    childTrs.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                    childTrs.GetComponent<Rigidbody>().angularVelocity =Vector3.zero;
                 }
             }
 
+            part.GetComponent<Rigidbody>().AddForce(velocity * 4, ForceMode.VelocityChange);
             transform.DetachChildren();
         }
     }
