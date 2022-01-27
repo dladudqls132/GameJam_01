@@ -14,13 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   audioInfos_BGM:
   - clip: {fileID: 8300000, guid: 16d0049757efc8c448572ef09d825fc9, type: 3}
-    name: bgm_1
+    name: part1_bgm
     volume: 0.53
     pitch_min: 1
     pitch_max: 1
   audioInfos_SFX:
-  - clip: {fileID: 8300000, guid: a07417ffb1218754d8457f4bbdead790, type: 3}
-    name: sfx_1
-    volume: 0.535
-    pitch_min: 0.95
-    pitch_max: 1.05
+  - clip: {fileID: 8300000, guid: 902a0e9982eb12b429c3d850a1281ccd, type: 3}
+    name: footstep_snow_1
+    volume: 1
+    pitch_min: 0.9
+    pitch_max: 1.1

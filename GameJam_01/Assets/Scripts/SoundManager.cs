@@ -5,7 +5,8 @@ using UnityEngine;
 public enum AudioSourceType
 {
     BGM,
-    SFX
+    SFX_2D,
+    SFX_3D
 }
 
 
@@ -48,12 +49,12 @@ public class SoundManager : MonoBehaviour
 
         for (int i = 0; i < audioSourceObject_2D_parent.childCount; i++)
         {
-            audioSources.Add(new KeyValuePair<AudioSourceType, AudioSource>(AudioSourceType.SFX, audioSourceObject_2D_parent.GetChild(i).GetComponent<AudioSource>()));
+            audioSources.Add(new KeyValuePair<AudioSourceType, AudioSource>(AudioSourceType.SFX_2D, audioSourceObject_2D_parent.GetChild(i).GetComponent<AudioSource>()));
         }
 
         for (int i = 0; i < audioSourceObject_3D_parent.childCount; i++)
         {
-            audioSources.Add(new KeyValuePair<AudioSourceType, AudioSource>(AudioSourceType.SFX, audioSourceObject_3D_parent.GetChild(i).GetComponent<AudioSource>()));
+            audioSources.Add(new KeyValuePair<AudioSourceType, AudioSource>(AudioSourceType.SFX_3D, audioSourceObject_3D_parent.GetChild(i).GetComponent<AudioSource>()));
         }
 
         yield return null;
@@ -66,7 +67,7 @@ public class SoundManager : MonoBehaviour
         for (int i = 0; i < audioSourceNum; i++)
         {
             Instantiate(audioSourceObject_2D, audioSourceObject_2D_parent);
-            Instantiate(audioSourceObject_2D, audioSourceObject_3D_parent);
+            Instantiate(audioSourceObject_3D, audioSourceObject_3D_parent);
         }
 
         yield return StartCoroutine(AddAudioSources());
@@ -90,7 +91,7 @@ public class SoundManager : MonoBehaviour
         }
     }
 
-    public IEnumerator AudioPlayOneShotSFX(string name, Vector3 position)
+    public IEnumerator AudioPlayOneShotSFX(string name, AudioSourceType type, Vector3 position)
     {
         AudioInfo audioInfo = scriptableObject_Audio.GetAudioInfo(name);
 
@@ -98,16 +99,15 @@ public class SoundManager : MonoBehaviour
         {
             foreach (var a in audioSources)
             {
-                if (a.Key == AudioSourceType.SFX)
+                if (a.Key == type)
                 {
-                    if (!a.Value.isPlaying)
-                    {
+                    
                         a.Value.transform.position = position;
                         a.Value.volume = audioInfo.volume + Random.Range(-0.01f, 0.01f);
                         a.Value.pitch = Random.Range(audioInfo.pitch_min, audioInfo.pitch_max);
                         a.Value.PlayOneShot(audioInfo.clip);
                         break;
-                    }
+                    
                 }
             }
         }

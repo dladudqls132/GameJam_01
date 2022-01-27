@@ -20,6 +20,9 @@ public class GameManager : MonoBehaviour
     }
 
     public SoundManager soundManager = null;
+    public ScoreManager scoreManager = null;
+    public PlayerController playerController = null;
+    public LoadingSceneController loadingSceneController = null;
 
     private void Awake()
     {
@@ -27,5 +30,17 @@ public class GameManager : MonoBehaviour
 
         if(soundManager != null)
             soundManager.Init();
+
+        scoreManager = FindObjectOfType<ScoreManager>();
+
+        if (scoreManager != null)
+            scoreManager.Init();
+
+        playerController = FindObjectOfType<PlayerController>();
+
+        if (playerController != null)
+            playerController.Init();
+
+        loadingSceneController = FindObjectOfType<LoadingSceneController>();
     }
 }

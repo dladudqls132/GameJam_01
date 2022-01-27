@@ -6,6 +6,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 
 public class ContinousMovement : MonoBehaviour
 {
+    [SerializeField] private GameObject cameraOffset;
     [SerializeField] private InputActionReference moveAction;
     [SerializeField] private InputActionReference turnAction;
     [SerializeField] private InputActionReference jumpAction;
@@ -43,6 +44,7 @@ public class ContinousMovement : MonoBehaviour
 
         rigid.useGravity = !IsClimb;
         rigid.velocity = direction.normalized * moveSpeed * moveAction.action.ReadValue<Vector2>().magnitude + new Vector3(0, rigid.velocity.y, 0);
+        cameraOffset.GetComponent<Animator>().SetFloat("moveSpeed", moveAction.action.ReadValue<Vector2>().magnitude);
     }
 
     private void OnJump(InputAction.CallbackContext obj)
@@ -50,5 +52,10 @@ public class ContinousMovement : MonoBehaviour
         if (!IsGrounded) return;
 
         rigid.AddForce(Vector3.up * jumpForce * rigid.mass);
+    }
+
+    void Walk()
+    {
+
     }
 }
