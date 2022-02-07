@@ -26,7 +26,7 @@ public class Enemy_Dummy : Enemy
 
     IEnumerator CheckingAttack()
     {
-        while(true)
+        while(!isDead)
         {
             if (Vector3.Distance(new Vector3(target.GetComponent<Collider>().bounds.center.x, this.transform.position.y, target.GetComponent<Collider>().bounds.center.z), this.transform.position) <= attackRange)
             {
@@ -35,5 +35,7 @@ public class Enemy_Dummy : Enemy
 
             yield return new WaitForSeconds(attackDelay);
         }
+
+        StopCoroutine(CheckingAttack());
     }
 }

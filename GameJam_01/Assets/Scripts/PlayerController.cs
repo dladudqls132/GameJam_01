@@ -8,6 +8,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private int hp;
     [SerializeField] private int currentHp;
     [SerializeField] private Canvas deadCanvas;
+    [SerializeField] private GameObject damagedPanel;
 
     public void Init()
     {
@@ -19,8 +20,10 @@ public class PlayerController : MonoBehaviour
         if (isDead) return;
 
         currentHp -= val;
-        
-        if(currentHp <= 0)
+
+        StartCoroutine(damagedPanel.GetComponent<DamagedPanel>().StartDamagedPanel(0.1f));
+
+        if (currentHp <= 0)
         {
             isDead = true;
             deadCanvas.enabled = true;

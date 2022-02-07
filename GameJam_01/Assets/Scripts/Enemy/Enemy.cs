@@ -49,9 +49,17 @@ public class Enemy : MonoBehaviour
         bones = this.transform.GetComponentsInChildren<Rigidbody>();
         foreach (Rigidbody r in bones)
         {
-            r.gameObject.AddComponent<Obi.ObiCollider>();
-            EnemyBone temp = r.gameObject.AddComponent<EnemyBone>();
-            temp.parent = this.transform;
+            if (r.gameObject.GetComponent<Obi.ObiCollider>() == null)
+            {
+                if(r.gameObject.GetComponent<Collider>() != null)
+                    r.gameObject.AddComponent<Obi.ObiCollider>();
+            }
+
+            if (r.gameObject.GetComponent<EnemyBone>() == null)
+            {
+                EnemyBone temp = r.gameObject.AddComponent<EnemyBone>();
+                temp.parent = this.transform;
+            }
 
             r.isKinematic = true;
         }
@@ -117,8 +125,8 @@ public class Enemy : MonoBehaviour
         currentHp -= damage;
 
         currentHp = Mathf.Clamp(currentHp, 0, hp);
-
-        if(part.GetComponent<EnemyBone>().bone == weaknessBone)
+        StartCoroutine(GameManager.Instance.soundManager.AudioPlayOneShotSFX("whip_1", AudioSourceType.SFX_3D, part.position));
+        if (part.GetComponent<EnemyBone>().bone == weaknessBone)
         {
             GameManager.Instance.scoreManager.IncreaseScore(score * 2);
         }
@@ -131,8 +139,11 @@ public class Enemy : MonoBehaviour
         {
             for(int i = 0; i < FindObjectsOfType<Controller>().Length; i++)
             FindObjectsOfType<Controller>()[i].Vibration(0.7f, 0.1f);
-            
+
+
+
             isDead = true;
+
 
             //foreach(EnemyBone e in this.transform.GetComponentsInChildren<EnemyBone>())
             //{
@@ -183,5 +194,6 @@ public class Enemy : MonoBehaviour
         //test.gameObject.SetActive(false);
 
         this.gameObject.SetActive(false);
+        StopCoroutine(ResetDelay());
     }
 }

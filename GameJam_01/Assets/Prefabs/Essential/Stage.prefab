@@ -394,6 +394,7 @@ MonoBehaviour:
   hp: 10
   currentHp: 0
   deadCanvas: {fileID: 929002889}
+  damagedPanel: {fileID: 0}
 --- !u!1001 &617058119826191665
 PrefabInstance:
   m_ObjectHideFlags: 0

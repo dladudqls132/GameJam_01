@@ -29,3 +29,13 @@ MonoBehaviour:
     volume: 1
     pitch_min: 0.9
     pitch_max: 1.1
+  - clip: {fileID: 8300000, guid: 24059e3c8e1fc784dbf5871705b29517, type: 3}
+    name: whip_1
+    volume: 1
+    pitch_min: 0.9
+    pitch_max: 1.1
+  - clip: {fileID: 8300000, guid: 1795644e157b8bf4799bb3c0a9e0b917, type: 3}
+    name: whip_2
+    volume: 1
+    pitch_min: 0.9
+    pitch_max: 1.1
